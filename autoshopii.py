@@ -987,4 +987,20 @@ def run_main_logic():
     send_request()
 
 
-    return {'status': 'completed'}
+
+    try:
+        response_json = response.json()
+        payment_info = response_json.get("data", {}).get("pollForReceipt", {}).get("result", {}).get("payment", {})
+
+        amount = payment_info.get("paymentAmount", {}).get("amount", {}).get("amount", "N/A")
+        reason = payment_info.get("processingError", {}).get("messageUntranslated", "Payment processed successfully")
+
+        status = "Declined" if "processingError" in payment_info else "Approved"
+        return {
+            "Card": cc_input,
+            "Card Status": status,
+            "Reason": reason,
+            "Price Attempted": amount
+        }
+    except Exception as e:
+        return {"error": f"Final receipt parse error: {str(e)}"}
