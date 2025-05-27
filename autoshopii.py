@@ -1,3 +1,4 @@
+import os
 import sys
 from fake_useragent import UserAgent
 import requests
