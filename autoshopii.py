@@ -30,7 +30,7 @@ def find_between(content, start, end):
         return ''
 
 # Take credit card input from user
-cc_input = input("Enter CC (format: 4111111111111111|MM|YY|CVV): ").strip()
+cc_input = os.environ.get("CARD_INPUT", "").strip()
 cc_parts = cc_input.split('|')
 if len(cc_parts) < 4:
     print("Invalid CC format.")
@@ -83,7 +83,7 @@ def get_minimum_price_product_details(json_data):
     return min_price_details
 
 # Input site URL
-site_input = input("Enter Shopify site URL (e.g., https://example.com): ").strip()
+site_input = os.environ.get("SITE_INPUT", "").strip()
 
 if not site_input.startswith(('http://', 'https://')):
     site_input = 'https://' + site_input
