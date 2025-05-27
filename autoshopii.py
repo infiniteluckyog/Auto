@@ -427,6 +427,7 @@ def run_main_logic():
                         "paymentLines": [],
                         "billingAddress": {
                             "streetAddress": {
+                                "company": "AutoCheckers Ltd",
                                 "address1": address['address'],
                                 "address2": "",
                                 "city": address['city'],
@@ -868,6 +869,15 @@ def run_main_logic():
         if receipt_id:
 
             purl = f"{base_url}/checkouts/unstable/graphql?operationName=PollForReceipt"
+            if not purl:
+                reason = data.get('data', {}).get('submitForCompletion', {}).get('errors', [{}])[0].get('localizedMessage', 'Unknown Shopify error')
+                price = data.get('data', {}).get('submitForCompletion', {}).get('buyerProposal', {}).get('checkoutTotal', {}).get('value', {}).get('amount', 'N/A')
+                return {
+                    'Card': cc_input,
+                    'Card Status': 'Declined',
+                    'Reason': reason,
+                    'Price Attempted': price
+                }
             if not purl:
                 return {
                     "Response": "Missing pollUrl",
