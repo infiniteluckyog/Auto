@@ -990,4 +990,21 @@ def run_main_logic():
     send_request()
 
 
-    return {'status': 'completed'}
+    try:
+        # Parse the response payload (assumes 'response' contains the JSON result)
+        response_data = response.json()
+        proposal = response_data.get('data', {}).get('submitForCompletion', {})
+        price = proposal.get('buyerProposal', {}).get('total', {}).get('value', {}).get('amount', 'N/A')
+        reason = 'Unknown error'
+        if 'errors' in proposal:
+            reason = proposal['errors'][0].get('localizedMessage', 'Unknown error')
+        status = 'Declined' if 'errors' in proposal else 'Approved'
+        card = os.environ.get('CARD_INPUT', 'xxxx|xx|xx|xxx')
+        return {
+            'Card Status': status,
+            'Card': card,
+            'Reason': reason,
+            'Price Attempted': price
+        }
+    except Exception as e:
+        return {'error': f'Failed to parse response: {str(e)}'}
