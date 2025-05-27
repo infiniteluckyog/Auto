@@ -1,4 +1,5 @@
 def run_main_logic():
+    global retry_count, max_retries
     import os
     import sys
     from fake_useragent import UserAgent
